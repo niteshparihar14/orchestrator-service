@@ -1,0 +1,80 @@
+notification:
+  service:
+    endpoint: http://localhost:3032/api/v1/notifications/customer/
+
+account:
+  service:
+    endpoint: http://localhost:3030/api/v1/account/validate
+    
+customer:
+  service:
+    endpoint: http://localhost:3031/api/v1/user/
+    
+loan:
+  service:
+    endpoint: http://localhost:1994/api/v1/loan/
+    
+server:
+  port: 8760
+  servlet:
+    context-path: /v1/orchestrator
+spring:
+  application:
+    name: orchestrator-service
+  cloud:
+    stream:
+      bindings:
+        transaction-in:
+          content-type: application/json
+          destination: account-topic-1
+          group: orchestrator
+        fetch-account:
+          content-type: application/json
+          destination: loan-topic
+          group: orchestrator
+        customer-in:
+          content-type: application/json
+          destination: account-topic
+          group: orchestrator
+        loan-in:
+          content-type: application/json
+          destination: customer-topic
+          group: orchestrator
+      kafka:
+        binder:
+          brokers: localhost:9092
+  profiles:
+    active: dev
+  
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true  
+    
+#server.port=8761
+#server.servlet.context-path=/v1/orchestrator
+#spring.application.name=orchestrator-service
+#
+#spring.profiles.active=dev
+#
+#spring.cloud.stream.bindings.order-in.destination=account-topic-1
+#spring.cloud.stream.bindings.order-in.content-type=application/json
+#spring.cloud.stream.bindings.order-in.group=orchestrator
+
+#spring.cloud.stream.bindings.inventory-in.destination=inventory-Topic
+#spring.cloud.stream.bindings.inventory-in.content-type=application/json
+#spring.cloud.stream.bindings.inventory-in.group=orchestrator
+#
+#spring.cloud.stream.bindings.payment-in.destination=payment-topic
+#spring.cloud.stream.bindings.payment-in.content-type=application/json
+#spring.cloud.stream.bindings.payment-in.group=orchestrator
+
+#spring.cloud.stream.kafka.binder.brokers=localhost:9092
+#
+#notification.service.endpoint=http://localhost:3031/api/v1/notifications/customer/
+#inventory.service.endpoint=http://localhost:8894/v1/item/
+#payment.service.endpoint=http://localhost:8893/v1/payment/
+#shipment.service.endpoint=http://localhost:8895/v1/shipping/
+
